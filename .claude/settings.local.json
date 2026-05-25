@@ -4,7 +4,15 @@
       "Bash(git config *)",
       "Bash(git checkout *)",
       "Bash(gh pr *)",
-      "PowerShell(Get-Command gh -ErrorAction SilentlyContinue; Get-ChildItem \"C:\\\\Program Files\\\\GitHub CLI\", \"C:\\\\Program Files \\(x86\\)\\\\GitHub CLI\", \"$env:LOCALAPPDATA\\\\Programs\\\\gh\" -ErrorAction SilentlyContinue | Select-Object -First 5; where.exe gh 2>$null)"
+      "PowerShell(Get-Command gh -ErrorAction SilentlyContinue; Get-ChildItem \"C:\\\\Program Files\\\\GitHub CLI\", \"C:\\\\Program Files \\(x86\\)\\\\GitHub CLI\", \"$env:LOCALAPPDATA\\\\Programs\\\\gh\" -ErrorAction SilentlyContinue | Select-Object -First 5; where.exe gh 2>$null)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\2487443\\\\OneDrive - Cognizant\\\\Desktop\\\\Pod 4 Project\\\\LifeTrack\" -Directory)",
+      "Bash(Select-Object Name)",
+      "Bash(for dir *)",
+      "Bash(xargs cat)",
+      "Bash(dotnet build *)",
+      "Bash(Get-ChildItem -Recurse -Depth 3 -Directory)",
+      "Bash(Select-Object FullName)",
+      "Bash(npx --no-install ng build --configuration=development)"
     ]
   }
 }
