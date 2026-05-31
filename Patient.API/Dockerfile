@@ -4,14 +4,14 @@ EXPOSE 8080
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
-COPY ["Notification.API/Notification.API.csproj", "Notification.API/"]
+COPY ["Patient.API/Patient.API.csproj", "Patient.API/"]
 COPY ["Shared.CL/Shared.CL.csproj", "Shared.CL/"]
-RUN dotnet restore "Notification.API/Notification.API.csproj"
+RUN dotnet restore "Patient.API/Patient.API.csproj"
 COPY . .
-WORKDIR "/src/Notification.API"
+WORKDIR "/src/Patient.API"
 RUN dotnet publish -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=build /app/publish .
-ENTRYPOINT ["dotnet", "Notification.API.dll"]
+ENTRYPOINT ["dotnet", "Patient.API.dll"]

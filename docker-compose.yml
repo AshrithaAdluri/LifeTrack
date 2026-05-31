@@ -1,0 +1,160 @@
+version: '3.8'
+
+networks:
+  lifetrack-net:
+    driver: bridge
+
+volumes:
+  sqldata:
+
+services:
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: "LifeTrack@123"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqldata:/var/opt/mssql
+    networks:
+      - lifetrack-net
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'LifeTrack@123' -Q 'SELECT 1' -No"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+
+  auth-api:
+    build:
+      context: .
+      dockerfile: Authentication.API/Dockerfile
+    ports:
+      - "5033:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__GovernanceDb=Server=sqlserver;Database=governanceDb;User Id=sa;Password=LifeTrack@123;TrustServerCertificate=True;MultipleActiveResultSets=True;
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - lifetrack-net
+
+  patient-api:
+    build:
+      context: .
+      dockerfile: Patient.API/Dockerfile
+    ports:
+      - "5095:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__ClinicalDb=Server=sqlserver;Database=clinicalDb;User Id=sa;Password=LifeTrack@123;TrustServerCertificate=True;MultipleActiveResultSets=True;
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - lifetrack-net
+
+  protocolsite-api:
+    build:
+      context: .
+      dockerfile: ProtocolSite.API/Dockerfile
+    ports:
+      - "5193:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__ClinicalDb=Server=sqlserver;Database=clinicalDb;User Id=sa;Password=LifeTrack@123;TrustServerCertificate=True;MultipleActiveResultSets=True;
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - lifetrack-net
+
+  adverseevent-api:
+    build:
+      context: .
+      dockerfile: AdverseEvent.API/Dockerfile
+    ports:
+      - "5159:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__ClinicalDb=Server=sqlserver;Database=clinicalDb;User Id=sa;Password=LifeTrack@123;TrustServerCertificate=True;MultipleActiveResultSets=True;
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - lifetrack-net
+
+  document-api:
+    build:
+      context: .
+      dockerfile: DocumentCompliance.API/Dockerfile
+    ports:
+      - "5232:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__GovernanceDb=Server=sqlserver;Database=governanceDb;User Id=sa;Password=LifeTrack@123;TrustServerCertificate=True;MultipleActiveResultSets=True;
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - lifetrack-net
+
+  analytics-api:
+    build:
+      context: .
+      dockerfile: AnalyticsReport.API/Dockerfile
+    ports:
+      - "5062:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__ClinicalDb=Server=sqlserver;Database=clinicalDb;User Id=sa;Password=LifeTrack@123;TrustServerCertificate=True;MultipleActiveResultSets=True;
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - lifetrack-net
+
+  notification-api:
+    build:
+      context: .
+      dockerfile: Notification.API/Dockerfile
+    ports:
+      - "5210:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__GovernanceDb=Server=sqlserver;Database=governanceDb;User Id=sa;Password=LifeTrack@123;TrustServerCertificate=True;MultipleActiveResultSets=True;
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - lifetrack-net
+
+  gateway-api:
+    build:
+      context: .
+      dockerfile: Gateway.API/Dockerfile
+    ports:
+      - "5046:8080"
+    depends_on:
+      - auth-api
+      - patient-api
+      - protocolsite-api
+      - adverseevent-api
+      - document-api
+      - analytics-api
+      - notification-api
+    networks:
+      - lifetrack-net
+
+  frontend:
+    build:
+      context: ./Lifetrack.UI
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"
+    depends_on:
+      - gateway-api
+    networks:
+      - lifetrack-net
