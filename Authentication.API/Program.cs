@@ -132,6 +132,7 @@ if (app.Environment.IsDevelopment())
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
+    await db.Database.EnsureCreatedAsync();
     await DbSeeder.SeedAsync(db);
 }
 
