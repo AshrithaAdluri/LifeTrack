@@ -52,7 +52,7 @@ public class DeviationService : IDeviationService
         return r;
     }
 
-    public async Task<DeviationResponse> CreateAsync(CreateDeviationRequest req)
+    public async Task<long> CreateAsync(CreateDeviationRequest req)
     {
         var deviation = new Deviation
         {
@@ -63,7 +63,7 @@ public class DeviationService : IDeviationService
         };
         var created = await _repo.AddAsync(deviation);
         BumpVersion();
-        return ToResponse(created);
+        return created.DeviationID;  // return only the generated ID
     }
 
     public async Task<DeviationResponse?> UpdateAsync(long id, UpdateDeviationRequest req)

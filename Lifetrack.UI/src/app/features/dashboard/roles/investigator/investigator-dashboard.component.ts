@@ -173,6 +173,14 @@ export class InvestigatorDashboardComponent implements OnInit, OnDestroy {
       .subscribe({ next: () => { n.status = 'Read'; } });
   }
 
+  deleteNotification(n: any): void {
+    this.http.delete(`${environment.apiUrl}/notifications/${n.notificationID}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({ next: () => {
+        this.notifications = this.notifications.filter((x: any) => x.notificationID !== n.notificationID);
+      }});
+  }
+
   sendReminder(v: any): void {
     if (this.remindingVisitID === v.visitID) return;
     const enr = this.enrollmentMap[v.enrollmentID];

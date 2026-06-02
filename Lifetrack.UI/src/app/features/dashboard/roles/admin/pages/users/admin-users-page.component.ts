@@ -118,7 +118,7 @@ export class AdminUsersPageComponent implements OnInit, OnDestroy {
 
     this.http.get<any>(`${environment.apiUrl}/users?${qs}`).subscribe({
       next: r => {
-        this.userList       = r.items ?? [];
+        this.userList       = (r.items ?? []).sort((a: any, b: any) => (b.userID ?? 0) - (a.userID ?? 0));
         this.listTotalCount = r.totalCount ?? 0;
         this.listTotalPages = r.totalPages ?? 1;
         this.listLoading    = false;

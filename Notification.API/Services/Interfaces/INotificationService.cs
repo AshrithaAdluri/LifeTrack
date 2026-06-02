@@ -15,4 +15,7 @@ public interface INotificationService
     /// UnauthorizedAccessException if the notification does not belong to the caller.
     /// </summary>
     Task<NotificationResponse?> MarkReadAsync(long id, long callerUserId);
+
+    /// <summary>Delete a notification. Throws UnauthorizedAccessException if not owned by caller.</summary>
+    Task<bool> DeleteAsync(long id, long callerUserId);
 }

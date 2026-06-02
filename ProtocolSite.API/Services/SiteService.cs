@@ -35,10 +35,11 @@ public class SiteService : ISiteService
         _cache.Set(key, result, CacheDuration); return result;
     }
 
-    public async Task<SiteResponse> CreateAsync(CreateSiteRequest req)
+    public async Task CreateAsync(CreateSiteRequest req)
     {
         var site = new Site { Name = req.Name.Trim(), Location = req.Location.Trim(), Status = req.Status };
-        await _repo.AddAsync(site); BumpVersion(); return Map(site);
+        await _repo.AddAsync(site);
+        BumpVersion();  // no return — controller sends NoContent
     }
 
     public async Task<SiteResponse?> UpdateAsync(long id, UpdateSiteRequest req)

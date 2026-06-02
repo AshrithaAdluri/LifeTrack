@@ -41,14 +41,14 @@ public class DeviationsController : ControllerBase
     {
         try
         {
-            var created = await _svc.CreateAsync(req);
-            return StatusCode(201, new { deviationID = created.DeviationID });
+            var deviationID = await _svc.CreateAsync(req);
+            return StatusCode(201, new { deviationID });
         }
         catch (DomainException ex) { return BadRequest(new { error = ex.Message }); }
     }
 
     [HttpPut("{id:long}")]
-    [RoleAuthorize(RolesEnum.Admin, RolesEnum.ClinicalTrialManager, RolesEnum.Investigator, RolesEnum.DataManager)]
+    [RoleAuthorize(RolesEnum.Admin, RolesEnum.ClinicalTrialManager, RolesEnum.RegulatoryOfficer, RolesEnum.DataManager)]
     public async Task<ActionResult> Update(long id, [FromBody] UpdateDeviationRequest req)
     {
         try

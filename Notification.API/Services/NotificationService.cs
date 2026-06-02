@@ -93,6 +93,19 @@ public class NotificationService : INotificationService
         return ToResponse(n);
     }
 
+    public async Task<bool> DeleteAsync(long id, long callerUserId)
+    {
+        var n = await _repo.GetByIdAsync(id);
+        if (n is null) return false;
+
+        if (n.UserID != callerUserId)
+            throw new UnauthorizedAccessException("You can only delete your own notifications.");
+
+        await _repo.DeleteAsync(id);
+        Invalidate(id);
+        return true;
+    }
+
     private int GetVersion() =>
         _cache.GetOrCreate(VersionKey, e => { e.Priority = CacheItemPriority.NeverRemove; return 0; });
 

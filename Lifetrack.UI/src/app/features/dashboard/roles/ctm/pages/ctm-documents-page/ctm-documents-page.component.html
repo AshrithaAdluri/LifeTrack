@@ -12,21 +12,15 @@
     <button class="btn-new-doc" *ngIf="!isRegulatoryOfficer" (click)="openCreate()">+ New Document</button>
   </div>
 
-  <!-- ── Category tabs ──────────────────────────────────────────────────────── -->
-  <div class="category-tabs-wrap">
-    <div class="category-tabs">
-      <button class="cat-tab" *ngFor="let c of categoryTabs"
-        [class.cat-tab--active]="activeCategory === c"
-        (click)="setCategory(c)">
-        {{ c === 'All' ? 'All' : categoryLabels[c] || c }}
-        <span class="cat-count" *ngIf="countFor(c) > 0">{{ countFor(c) }}</span>
-      </button>
-    </div>
-  </div>
-
   <!-- ── Toolbar ────────────────────────────────────────────────────────────── -->
   <div class="doc-toolbar">
     <input class="doc-search" [(ngModel)]="searchTerm" placeholder="Search by title…">
+    <select class="doc-status-filter" [(ngModel)]="activeCategory" (change)="currentPage = 1">
+      <option value="All">All Categories</option>
+      <option *ngFor="let c of categories" [value]="c.value">
+        {{ c.label }} {{ countFor(c.value) > 0 ? '(' + countFor(c.value) + ')' : '' }}
+      </option>
+    </select>
     <select class="doc-status-filter" [(ngModel)]="statusFilter">
       <option value="">All statuses</option>
       <option value="Draft">Draft</option>
@@ -57,6 +51,7 @@
           <th>Version</th>
           <th>Status</th>
           <th>Uploaded</th>
+          <th *ngIf="isRegulatoryOfficer">Uploaded By</th>
           <th></th>
         </tr>
       </thead>
@@ -68,8 +63,11 @@
           <td class="doc-version">v{{ d.version }}</td>
           <td><span class="status-badge" [ngClass]="statusClass(d.status)">{{ d.status }}</span></td>
           <td class="doc-muted">{{ d.uploadedAt | date:'d MMM yyyy' }}</td>
+          <td class="doc-muted" *ngIf="isRegulatoryOfficer">{{ userName(d.uploadedBy) }}</td>
           <td>
-            <button class="btn-doc-action" (click)="openEdit(d)">
+            <button class="btn-doc-action" (click)="openEdit(d)"
+              *ngIf="isRegulatoryOfficer || !isDataManager || d.uploadedBy === currentUserId"
+              [class.btn-view]="isDataManager && d.uploadedBy !== currentUserId">
               {{ isRegulatoryOfficer ? 'Review' : 'Edit' }}
             </button>
           </td>

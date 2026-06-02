@@ -43,7 +43,9 @@ export class CtmAdverseEventsPageComponent implements OnInit {
   error   = '';
   success = '';
 
-  selectedStatus = '';
+  selectedStatus   = '';
+  selectedSeverity = '';
+  searchTerm       = '';
   statusOptions = ['All', 'Open', 'Under Review', 'Resolved'];
 
   // ── Escalation tracking (persisted in localStorage) ───────────────────────
@@ -162,15 +164,20 @@ export class CtmAdverseEventsPageComponent implements OnInit {
   }
 
   applyFilter(): void {
-    if (!this.selectedStatus || this.selectedStatus === 'All') {
-      this.filteredEvents = [...this.adverseEvents];
-    } else {
-      this.filteredEvents = this.adverseEvents.filter(ae => ae.status === this.selectedStatus);
-    }
+    this.filteredEvents = this.adverseEvents.filter(ae => {
+      const matchStatus   = !this.selectedStatus   || ae.status   === this.selectedStatus;
+      const matchSeverity = !this.selectedSeverity || ae.severity === this.selectedSeverity;
+      const matchSearch   = !this.searchTerm.trim() ||
+        ae.description?.toLowerCase().includes(this.searchTerm.trim().toLowerCase()) ||
+        this.patientMap[ae.patientID]?.toLowerCase().includes(this.searchTerm.trim().toLowerCase());
+      return matchStatus && matchSeverity && matchSearch;
+    });
   }
 
   clearFilter(): void {
-    this.selectedStatus = '';
+    this.selectedStatus   = '';
+    this.selectedSeverity = '';
+    this.searchTerm       = '';
     this.applyFilter();
   }
 

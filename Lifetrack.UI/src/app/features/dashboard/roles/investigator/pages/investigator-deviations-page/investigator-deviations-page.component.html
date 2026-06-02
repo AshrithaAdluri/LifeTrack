@@ -13,19 +13,22 @@
     </div>
   </div>
 
-  <!-- Search Bar -->
+  <!-- Search + Filter Bar -->
   <div class="search-bar" *ngIf="!loading">
     <div class="search-input-wrap">
       <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input
-        type="text"
-        class="search-input"
-        placeholder="Search by protocol or site…"
-        [(ngModel)]="searchTerm"
-      />
+      <input type="text" class="search-input"
+        placeholder="Search by protocol, site or description…"
+        [(ngModel)]="searchTerm"/>
       <button class="search-clear" *ngIf="searchTerm" (click)="clearSearch()" title="Clear">&#x2715;</button>
     </div>
-    <span class="search-count" *ngIf="searchTerm">
+    <select class="filter-select-inline" [(ngModel)]="selectedSeverity">
+      <option value="">All Severities</option>
+      <option value="Minor">Minor</option>
+      <option value="Major">Major</option>
+      <option value="Critical">Critical</option>
+    </select>
+    <span class="search-count" *ngIf="searchTerm || selectedSeverity">
       {{ displayedDeviations.length }} result{{ displayedDeviations.length !== 1 ? 's' : '' }}
     </span>
   </div>

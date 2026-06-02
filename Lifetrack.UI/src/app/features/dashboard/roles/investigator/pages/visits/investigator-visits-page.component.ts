@@ -126,7 +126,8 @@ export class InvestigatorVisitsPageComponent implements OnInit {
     this.http.get<any>(`${environment.apiUrl}/visits?enrollmentId=${enrollment.enrollmentID}&pageSize=200`)
       .pipe(catchError(() => of({ items: [] })))
       .subscribe(r => {
-        this.visits        = r.items ?? [];
+        this.visits = r.items ?? [];
+        this.sortVisits();          // Sort by most recent date first
         this.visitsLoading = false;
       });
   }
@@ -197,6 +198,13 @@ export class InvestigatorVisitsPageComponent implements OnInit {
   }
   closeAddModal() { this.showAddModal = false; }
 
+  /** Sort visits by date — nearest date first */
+  private sortVisits(): void {
+    this.visits.sort((a, b) =>
+      new Date(a.visitDate).getTime() - new Date(b.visitDate).getTime()
+    );
+  }
+
   submitAdd() {
     if (this.addForm.invalid) { this.addForm.markAllAsTouched(); return; }
     this.addSubmitting = true;
@@ -219,6 +227,7 @@ export class InvestigatorVisitsPageComponent implements OnInit {
           status:       payload.status,
           notes:        payload.notes
         });
+        this.sortVisits();          // Re-sort so new visit appears in correct position
 
         // Notify patient about their scheduled visit
         const patientID     = this.selectedEnrollment?.patientID;
@@ -271,6 +280,7 @@ export class InvestigatorVisitsPageComponent implements OnInit {
     this.http.put<void>(`${environment.apiUrl}/visits/${this.editingVisit.visitID}`, payload).subscribe({
       next: () => {
         Object.assign(this.editingVisit, payload);
+        this.sortVisits();          // Re-sort — date may have changed position
 
         // Notify patient if visit marked as Missed
         if (payload.status === 'Missed') {

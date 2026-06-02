@@ -40,7 +40,7 @@ public class EnrollmentService : IEnrollmentService
         return result;
     }
 
-    public async Task<EnrollmentResponse> CreateAsync(CreateEnrollmentRequest req)
+    public async Task<long> CreateAsync(CreateEnrollmentRequest req)
     {
         if (await _patients.GetByIdAsync(req.PatientID) is null)
             throw new DomainException($"Patient {req.PatientID} not found.");
@@ -53,7 +53,7 @@ public class EnrollmentService : IEnrollmentService
         BumpVersion(VersionKey);
         // Keep Patients.EnrollmentStatus in sync with the new enrollment
         await SyncPatientStatusAsync(req.PatientID);
-        return Map(enrollment);
+        return enrollment.EnrollmentID;  // return only the generated ID
     }
 
     public async Task<EnrollmentResponse?> UpdateAsync(long enrollmentId, UpdateEnrollmentRequest req)

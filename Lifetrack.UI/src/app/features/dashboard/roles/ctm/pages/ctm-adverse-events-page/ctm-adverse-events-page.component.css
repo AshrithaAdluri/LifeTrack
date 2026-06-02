@@ -75,6 +75,12 @@
 .btn-confirm-yes { flex: 1; padding: 7px; font-size: 13px; font-weight: 600; background: #b45309; color: #fff; border: none; border-radius: 7px; cursor: pointer; }
 .btn-confirm-yes:hover { background: #92400e; }
 
+/* ── Search input in filter bar ─────────────────────────────────────────── */
+.search-group      { position: relative; display: flex; align-items: center; }
+.search-icon-inline { position: absolute; left: 10px; color: #9ca3af; pointer-events: none; }
+.filter-search     { padding: 6px 10px 6px 30px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; width: 220px; }
+.filter-search:focus { outline: none; border-color: #6366f1; }
+
 /* ── Action cell layout ──────────────────────────────────────────────────── */
 .action-cell {
   display: flex;

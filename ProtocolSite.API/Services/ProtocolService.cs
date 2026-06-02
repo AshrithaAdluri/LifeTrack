@@ -37,11 +37,12 @@ public class ProtocolService : IProtocolService
         _cache.Set(key, result, CacheDuration); return result;
     }
 
-    public async Task<ProtocolResponse> CreateAsync(CreateProtocolRequest req)
+    public async Task CreateAsync(CreateProtocolRequest req)
     {
         if (req.EndDate.HasValue && req.EndDate.Value < req.StartDate) throw new DomainException("EndDate cannot be earlier than StartDate.");
         var protocol = new Protocol { Title = req.Title.Trim(), StartDate = req.StartDate, EndDate = req.EndDate, Status = req.Status };
-        await _repo.AddAsync(protocol); BumpVersion(); return Map(protocol);
+        await _repo.AddAsync(protocol);
+        BumpVersion();  // no return — controller sends NoContent
     }
 
     public async Task<ProtocolResponse?> UpdateAsync(long id, UpdateProtocolRequest req)

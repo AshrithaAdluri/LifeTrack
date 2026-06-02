@@ -72,6 +72,24 @@ public class NotificationsController : ControllerBase
         }
     }
 
+    /// <summary>Delete a notification. Caller must own it.</summary>
+    [HttpDelete("{id:long}")]
+    public async Task<IActionResult> Delete(long id)
+    {
+        var userId = GetCurrentUserId();
+        if (userId is null) return Unauthorized();
+
+        try
+        {
+            var deleted = await _svc.DeleteAsync(id, userId.Value);
+            return deleted ? NoContent() : NotFound();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
+    }
+
     private long? GetCurrentUserId()
     {
         var claim = User.FindFirstValue(ClaimTypes.NameIdentifier)

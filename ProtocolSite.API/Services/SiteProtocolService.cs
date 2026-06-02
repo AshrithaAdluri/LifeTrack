@@ -38,8 +38,20 @@ public class SiteProtocolService : ISiteProtocolService
 
     public async Task<SiteProtocolResponse> CreateAsync(CreateSiteProtocolRequest req)
     {
-        if (await _sites.GetByIdAsync(req.SiteID) is null) throw new DomainException($"Site {req.SiteID} not found.");
-        if (await _protocols.GetByIdAsync(req.ProtocolID) is null) throw new DomainException($"Protocol {req.ProtocolID} not found.");
+        var site = await _sites.GetByIdAsync(req.SiteID)
+            ?? throw new DomainException($"Site {req.SiteID} not found.");
+
+        if (site.Status != "Active")
+            throw new DomainException(
+                $"Site '{site.Name}' is currently {site.Status}. Only Active sites can be assigned to protocols.");
+
+        var protocol = await _protocols.GetByIdAsync(req.ProtocolID)
+            ?? throw new DomainException($"Protocol {req.ProtocolID} not found.");
+
+        if (protocol.Status != "Active")
+            throw new DomainException(
+                $"Protocol '{protocol.Title}' is currently {protocol.Status}. Only Active protocols can accept new site assignments.");
+
         var sp = new SiteProtocol { SiteID = req.SiteID, ProtocolID = req.ProtocolID, InvestigatorID = req.InvestigatorID, InitiationDate = req.InitiationDate, Phase = req.Phase, Status = req.Status };
         await _repo.AddAsync(sp); BumpVersion(); return Map(sp);
     }

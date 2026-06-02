@@ -28,7 +28,8 @@ export class InvestigatorDeviationsPageComponent implements OnInit {
 
   filteredDeviations: any[] = [];
   siteProtocolIDs: Set<number> = new Set();
-  searchTerm = '';
+  searchTerm       = '';
+  selectedSeverity = '';
 
   protocolMap: Record<number, string> = {};
   siteMap: Record<number, string> = {};
@@ -139,15 +140,20 @@ export class InvestigatorDeviationsPageComponent implements OnInit {
 
   get displayedDeviations(): any[] {
     const term = this.searchTerm.trim().toLowerCase();
-    if (!term) return this.filteredDeviations;
     return this.filteredDeviations.filter(d => {
-      const protocol = this.protocolName(d).toLowerCase();
-      const site     = this.siteName(d).toLowerCase();
-      return protocol.includes(term) || site.includes(term);
+      const matchSeverity = !this.selectedSeverity || d.severity === this.selectedSeverity;
+      const matchSearch   = !term ||
+        this.protocolName(d).toLowerCase().includes(term) ||
+        this.siteName(d).toLowerCase().includes(term) ||
+        d.description?.toLowerCase().includes(term);
+      return matchSeverity && matchSearch;
     });
   }
 
-  clearSearch(): void { this.searchTerm = ''; }
+  clearSearch(): void {
+    this.searchTerm       = '';
+    this.selectedSeverity = '';
+  }
 
   spLabel(sp: any): string {
     const protocol = this.protocolMap[+sp.protocolID] || `Protocol #${sp.protocolID}`;

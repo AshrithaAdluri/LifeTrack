@@ -81,7 +81,10 @@ export class PatientDashboardComponent implements OnInit, OnDestroy {
 
   loading        = true;
   detailsLoading = true;
-  showNotifPanel = false;
+  showNotifPanel    = false;
+  showAllEnrollments = false;
+  showAllVisits      = false;
+  showAllSymptoms    = false;
 
   // ── Symptom Report modal ──────────────────────────────────────────────────
   showSymptomModal   = false;
@@ -385,6 +388,15 @@ export class PatientDashboardComponent implements OnInit, OnDestroy {
           this.statsNotifications = this.notifications.filter((x: any) => x.status === 'Unread').length;
         }
       });
+  }
+
+  deleteNotification(n: any): void {
+    this.http.delete(`${environment.apiUrl}/notifications/${n.notificationID}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({ next: () => {
+        this.notifications = this.notifications.filter((x: any) => x.notificationID !== n.notificationID);
+        this.statsNotifications = this.notifications.filter((x: any) => x.status === 'Unread').length;
+      }});
   }
 
   ngOnDestroy(): void {

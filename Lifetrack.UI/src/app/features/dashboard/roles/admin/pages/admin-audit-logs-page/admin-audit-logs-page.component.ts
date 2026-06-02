@@ -52,6 +52,11 @@ export class AdminAuditLogsPageComponent implements OnInit {
   /* ── Filters (Login Activity tab) ────────────────────────────────── */
   loginSearch = '';
 
+  /* ── Pagination ───────────────────────────────────────────────────── */
+  readonly pageSize   = 15;
+  entriesPage   = 1;
+  loginPage     = 1;
+
   constructor(
     private http:    HttpClient,
     private router:  Router,
@@ -177,6 +182,15 @@ export class AdminAuditLogsPageComponent implements OnInit {
     return list;
   }
 
+  get entriesTotalPages(): number {
+    return Math.max(1, Math.ceil(this.filteredEntries.length / this.pageSize));
+  }
+
+  get pagedEntries(): AuditEntry[] {
+    const start = (this.entriesPage - 1) * this.pageSize;
+    return this.filteredEntries.slice(start, start + this.pageSize);
+  }
+
   /* ── Filtered Login Logs ──────────────────────────────────────────── */
   get filteredLoginLogs(): LoginLog[] {
     if (!this.loginSearch.trim()) return this.loginLogs;
@@ -185,6 +199,15 @@ export class AdminAuditLogsPageComponent implements OnInit {
       (l.userName ?? '').toLowerCase().includes(t) ||
       l.action.toLowerCase().includes(t)
     );
+  }
+
+  get loginTotalPages(): number {
+    return Math.max(1, Math.ceil(this.filteredLoginLogs.length / this.pageSize));
+  }
+
+  get pagedLoginLogs(): LoginLog[] {
+    const start = (this.loginPage - 1) * this.pageSize;
+    return this.filteredLoginLogs.slice(start, start + this.pageSize);
   }
 
   /* ── Summary getters ──────────────────────────────────────────────── */
@@ -242,8 +265,10 @@ export class AdminAuditLogsPageComponent implements OnInit {
     return source === 'Governance DB' ? 'source-gov' : 'source-clin';
   }
 
-  setAction(a: string): void { this.selectedAction = a; }
+  setAction(a: string): void { this.selectedAction = a; this.entriesPage = 1; }
   setTab(t: 'entries' | 'logins'): void { this.activeTab = t; }
+  onSearchChange(): void { this.entriesPage = 1; }
+  onLoginSearchChange(): void { this.loginPage = 1; }
 
   goBack(): void {
     const role = this.authSvc.currentUser?.role;

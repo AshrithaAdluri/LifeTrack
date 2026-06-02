@@ -33,6 +33,7 @@ export class CtmDocumentsPageComponent implements OnInit {
   documents:   Doc[]      = [];
   protocols:   Protocol[] = [];
   protocolMap: Record<number, string> = {};
+  userMap:     Record<number, string> = {};
 
   loading = true;
   error   = '';
@@ -40,6 +41,7 @@ export class CtmDocumentsPageComponent implements OnInit {
   // ── Role ────────────────────────────────────────────────────────────────────
   isRegulatoryOfficer = false;
   isDataManager       = false;
+  currentUserId       = 0;
 
   // ── Filters ─────────────────────────────────────────────────────────────────
   activeCategory = 'All';
@@ -263,6 +265,11 @@ export class CtmDocumentsPageComponent implements OnInit {
     return this.protocolMap[id] || `Protocol #${id}`;
   }
 
+  userName(id: number | null | undefined): string {
+    if (!id) return '—';
+    return this.userMap[id] || `User #${id}`;
+  }
+
   categoryClass(cat: string): string { return this.categoryColors[cat] ?? 'cat-slate'; }
 
   statusClass(s: string): string {
@@ -284,6 +291,7 @@ export class CtmDocumentsPageComponent implements OnInit {
     const role = this.authSvc.currentUser?.role;
     this.isRegulatoryOfficer = role === 'RegulatoryOfficer';
     this.isDataManager       = role === 'DataManager';
+    this.currentUserId       = this.authSvc.currentUser?.userID ?? 0;
     this.loadData();
   }
 
@@ -292,12 +300,18 @@ export class CtmDocumentsPageComponent implements OnInit {
     forkJoin({
       documents: this.http.get<any>(`${environment.apiUrl}/documents?pageSize=200`).pipe(catchError(() => of({ items: [] }))),
       protocols: this.http.get<any>(`${environment.apiUrl}/protocols?pageSize=200`).pipe(catchError(() => of({ items: [] }))),
+      users:     this.http.get<any>(`${environment.apiUrl}/users?pageSize=200`).pipe(catchError(() => of({ items: [] }))),
     }).subscribe({
-      next: ({ documents, protocols }) => {
+      next: ({ documents, protocols, users }) => {
         this.documents = documents.items ?? [];
         const protoList: Protocol[] = protocols.items ?? [];
         protoList.forEach(p => this.protocolMap[p.protocolID] = p.title);
         this.protocols = protoList;
+        (users.items ?? []).forEach((u: any) => {
+          const id   = u.userID ?? u.id;
+          const name = u.name   ?? u.email ?? `User #${id}`;
+          if (id != null) this.userMap[+id] = name;
+        });
         this.loading   = false;
       },
       error: () => { this.error = 'Failed to load documents.'; this.loading = false; }

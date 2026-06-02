@@ -153,9 +153,11 @@ export class InvestigatorEnrollmentsPageComponent implements OnInit {
       (patients.items ?? []).forEach((p: any)    => this.patientMap[p.patientID]                = p);
       (allSiteProtocols.items ?? []).forEach((sp: any) => this.siteProtocolMap[sp.siteProtocolID] = sp);
 
-      // Enroll-modal dropdown: prefer investigator's own protocols; fall back to all
-      const myItems = mySiteProtocols.items ?? [];
-      this.siteProtocolOptions = myItems.length > 0 ? myItems : (allSiteProtocols.items ?? []);
+      // Enroll-modal dropdown: only Active assignments
+      const myItems  = mySiteProtocols.items ?? [];
+      const allItems = allSiteProtocols.items ?? [];
+      const base     = myItems.length > 0 ? myItems : allItems;
+      this.siteProtocolOptions = base.filter((sp: any) => sp.status === 'Active');
       this.patientOptions      = patients.items ?? [];
 
       // Show ALL enrollments — no investigator filter so real data is always visible

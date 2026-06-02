@@ -50,7 +50,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       this.sites           = d.sites;
       this.activeSites     = d.activeSites;
       this.recentAuditLogs = d.recentAuditLogs;
-      this.recentUsers     = d.recentUsers;
+      this.recentUsers     = (d.recentUsers ?? []).sort((a: any, b: any) => (b.userID ?? 0) - (a.userID ?? 0));
       this.loading         = false;
     });
   }

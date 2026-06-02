@@ -68,6 +68,9 @@
 .btn-confirm-yes { flex: 1; padding: 7px; font-size: 13px; font-weight: 600; background: #b45309; color: #fff; border: none; border-radius: 7px; cursor: pointer; }
 .btn-confirm-yes:hover { background: #92400e; }
 
+/* ── Severity filter inline with search ─────────────────────────────────── */
+.filter-select-inline { padding: 6px 10px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; background: #fff; color: #374151; }
+
 /* ── Action cell layout ──────────────────────────────────────────────────── */
 .action-cell {
   display: flex;
@@ -154,15 +157,16 @@
 .search-bar {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   margin-bottom: 14px;
+  flex-wrap: wrap;
 }
 .search-input-wrap {
   position: relative;
   display: flex;
   align-items: center;
-  flex: 1;
-  max-width: 380px;
+  width: 280px;
+  flex-shrink: 0;
 }
 .search-icon {
   position: absolute;
@@ -172,8 +176,8 @@
   flex-shrink: 0;
 }
 .search-input {
-  width: 100%;
-  padding: 8px 34px 8px 34px;
+  width: 280px;
+  padding: 7px 30px 7px 32px;
   font-size: 13px;
   border: 1px solid #e2e8f0;
   border-radius: 8px;

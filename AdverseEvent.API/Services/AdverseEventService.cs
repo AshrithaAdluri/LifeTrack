@@ -52,7 +52,7 @@ public class AdverseEventService : IAdverseEventService
         return r;
     }
 
-    public async Task<AdverseEventResponse> CreateAsync(CreateAdverseEventRequest req)
+    public async Task<long> CreateAsync(CreateAdverseEventRequest req)
     {
         var ae = new AdverseEventRecord
         {
@@ -65,7 +65,7 @@ public class AdverseEventService : IAdverseEventService
         };
         var created = await _repo.AddAsync(ae);
         BumpVersion();
-        return ToResponse(created);
+        return created.EventID;  // return only the generated ID
     }
 
     public async Task<AdverseEventResponse?> UpdateAsync(long id, UpdateAdverseEventRequest req)

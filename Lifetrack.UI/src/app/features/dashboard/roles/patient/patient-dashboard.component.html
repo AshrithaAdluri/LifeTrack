@@ -39,6 +39,9 @@
                   <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                   Mark as read
                 </button>
+                <button class="notif-delete-btn" (click)="deleteNotification(n); $event.stopPropagation()" title="Delete">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+                </button>
               </div>
               <span class="notif-dot-sm" *ngIf="n.status === 'Unread'"></span>
             </div>
@@ -155,14 +158,20 @@
         <div class="pat-card">
           <div class="pat-card-hdr">
             <span class="pat-card-title">My trial enrollments</span>
-            <span class="pat-card-badge" *ngIf="!detailsLoading">{{ statsActiveEnrollments }} active</span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="pat-card-badge" *ngIf="!detailsLoading">{{ statsActiveEnrollments }} active</span>
+              <button class="pat-view-all-btn" *ngIf="!detailsLoading && enrollments.length > 2"
+                (click)="showAllEnrollments = !showAllEnrollments">
+                {{ showAllEnrollments ? 'Show less' : 'View all' }}
+              </button>
+            </div>
           </div>
 
           <div *ngIf="detailsLoading" class="pat-loading"><div class="pat-spinner"></div><span>Loading…</span></div>
           <div *ngIf="!detailsLoading && enrollments.length === 0" class="pat-empty">You haven't been enrolled in any trials yet.</div>
 
           <div *ngIf="!detailsLoading && enrollments.length > 0">
-            <div class="pat-list-item" *ngFor="let e of enrollments; let last = last" [class.pat-no-border]="last">
+            <div class="pat-list-item" *ngFor="let e of (showAllEnrollments ? enrollments : enrollments | slice:0:3); let last = last" [class.pat-no-border]="last">
               <div class="pat-list-icon" [class.pat-list-icon-green]="e.status === 'Active'">
                 <svg *ngIf="e.status === 'Active'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                 <svg *ngIf="e.status !== 'Active'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -180,14 +189,20 @@
         <div class="pat-card">
           <div class="pat-card-hdr">
             <span class="pat-card-title">Upcoming visits</span>
-            <span class="pat-card-badge" *ngIf="!detailsLoading">{{ statsUpcomingVisits }} scheduled</span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="pat-card-badge" *ngIf="!detailsLoading">{{ statsUpcomingVisits }} scheduled</span>
+              <button class="pat-view-all-btn" *ngIf="!detailsLoading && upcomingVisits.length > 2"
+                (click)="showAllVisits = !showAllVisits">
+                {{ showAllVisits ? 'Show less' : 'View all' }}
+              </button>
+            </div>
           </div>
 
           <div *ngIf="detailsLoading" class="pat-loading"><div class="pat-spinner"></div></div>
           <div *ngIf="!detailsLoading && upcomingVisits.length === 0" class="pat-empty">No upcoming visits scheduled.</div>
 
           <div *ngIf="!detailsLoading && upcomingVisits.length > 0">
-            <div class="pat-visit-item" *ngFor="let v of upcomingVisits | slice:0:5; let last = last" [class.pat-no-border]="last">
+            <div class="pat-visit-item" *ngFor="let v of (showAllVisits ? upcomingVisits : upcomingVisits | slice:0:3); let last = last" [class.pat-no-border]="last">
               <div class="pat-visit-date">
                 <span class="pat-visit-day">{{ v.visitDate | date:'d' }}</span>
                 <span class="pat-visit-mon">{{ v.visitDate | date:'MMM' }}</span>
@@ -216,10 +231,16 @@
         <div class="pat-card" *ngIf="!detailsLoading && adverseEvents.length > 0">
           <div class="pat-card-hdr">
             <span class="pat-card-title">My reported symptoms</span>
-            <span class="pat-card-badge">{{ adverseEvents.length }} on record</span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="pat-card-badge">{{ adverseEvents.length }} on record</span>
+              <button class="pat-view-all-btn" *ngIf="adverseEvents.length > 2"
+                (click)="showAllSymptoms = !showAllSymptoms">
+                {{ showAllSymptoms ? 'Show less' : 'View all' }}
+              </button>
+            </div>
           </div>
 
-          <div class="pat-list-item" *ngFor="let ae of adverseEvents | slice:0:4; let last = last" [class.pat-no-border]="last">
+          <div class="pat-list-item" *ngFor="let ae of (showAllSymptoms ? adverseEvents : adverseEvents | slice:0:3); let last = last" [class.pat-no-border]="last">
             <div class="pat-list-icon pat-list-icon-red">
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
             </div>

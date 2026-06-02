@@ -179,6 +179,14 @@ export class RegulatoryDashboardComponent implements OnInit, OnDestroy {
       .subscribe({ next: () => { n.status = 'Read'; } });
   }
 
+  deleteNotification(n: any): void {
+    this.http.delete(`${environment.apiUrl}/notifications/${n.notificationID}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({ next: () => {
+        this.notifications = this.notifications.filter((x: any) => x.notificationID !== n.notificationID);
+      }});
+  }
+
   docStatusClass(s: string): string {
     const m: Record<string, string> = {
       Approved: 'badge-green', 'Under Review': 'badge-amber',

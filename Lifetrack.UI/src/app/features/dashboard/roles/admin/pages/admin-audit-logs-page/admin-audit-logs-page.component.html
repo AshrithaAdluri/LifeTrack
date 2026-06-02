@@ -31,69 +31,28 @@
 
   <ng-container *ngIf="!loading">
 
-    <!-- ── Summary Strip ──────────────────────────────────────────────────── -->
-    <div class="summary-strip">
-
-      <div class="summary-card summary-total">
-        <div class="summary-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
-            <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
-          </svg>
-        </div>
-        <div class="summary-body">
-          <span class="summary-label">Total Entries</span>
-          <span class="summary-value">{{ entries.length }}</span>
-        </div>
+    <!-- ── KPI Strip ─────────────────────────────────────────────────────────── -->
+    <div class="kpi-strip">
+      <div class="kpi-card">
+        <p class="kpi-label">Total Entries</p>
+        <p class="kpi-value">{{ entries.length }}</p>
+        <p class="kpi-note">All databases</p>
       </div>
-
-      <div class="summary-card summary-gov">
-        <div class="summary-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <ellipse cx="12" cy="5" rx="9" ry="3"/>
-            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
-            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
-          </svg>
-        </div>
-        <div class="summary-body">
-          <span class="summary-label">Governance DB</span>
-          <span class="summary-value">{{ totalGovernance }}</span>
-        </div>
+      <div class="kpi-card">
+        <p class="kpi-label">Governance DB</p>
+        <p class="kpi-value">{{ totalGovernance }}</p>
+        <p class="kpi-note">Users, notifications</p>
       </div>
-
-      <div class="summary-card summary-clin">
-        <div class="summary-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <ellipse cx="12" cy="5" rx="9" ry="3"/>
-            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
-            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
-          </svg>
-        </div>
-        <div class="summary-body">
-          <span class="summary-label">Clinical DB</span>
-          <span class="summary-value">{{ totalClinical }}</span>
-        </div>
+      <div class="kpi-card">
+        <p class="kpi-label">Clinical DB</p>
+        <p class="kpi-value">{{ totalClinical }}</p>
+        <p class="kpi-note">Protocols, patients</p>
       </div>
-
-      <div class="summary-card summary-logins">
-        <div class="summary-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-            <polyline points="10 17 15 12 10 7"/>
-            <line x1="15" y1="12" x2="3" y2="12"/>
-          </svg>
-        </div>
-        <div class="summary-body">
-          <span class="summary-label">Today's Logins</span>
-          <span class="summary-value">{{ todayLogins }}</span>
-        </div>
+      <div class="kpi-card">
+        <p class="kpi-label">Today's Logins</p>
+        <p class="kpi-value" [class.kpi-warn]="todayLogins > 0">{{ todayLogins }}</p>
+        <p class="kpi-note">Login events today</p>
       </div>
-
     </div>
 
     <!-- ── Tab Bar ─────────────────────────────────────────────────────────── -->
@@ -131,7 +90,7 @@
                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
               </svg>
-              <input type="text" placeholder="Search entity or user…" [(ngModel)]="searchTerm" />
+              <input type="text" placeholder="Search entity or user…" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" />
             </div>
             <span class="entry-count">{{ filteredEntries.length }} entr{{ filteredEntries.length !== 1 ? 'ies' : 'y' }}</span>
           </div>
@@ -152,8 +111,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let e of filteredEntries; let i = index">
-              <td class="col-num cell-muted">{{ i + 1 }}</td>
+            <tr *ngFor="let e of pagedEntries; let i = index">
+              <td class="col-num cell-muted">{{ (entriesPage - 1) * pageSize + i + 1 }}</td>
               <td><span class="entity-name">{{ e.entityName }}</span></td>
               <td class="col-action">
                 <span class="badge" [ngClass]="actionClass(e.action)">{{ e.action }}</span>
@@ -169,6 +128,13 @@
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <!-- Pagination for audit entries -->
+      <div class="audit-pagination" *ngIf="entriesTotalPages > 1">
+        <button class="page-btn" [disabled]="entriesPage === 1" (click)="entriesPage = entriesPage - 1">← Prev</button>
+        <span class="page-info">Page {{ entriesPage }} of {{ entriesTotalPages }}</span>
+        <button class="page-btn" [disabled]="entriesPage === entriesTotalPages" (click)="entriesPage = entriesPage + 1">Next →</button>
       </div>
 
       <div class="empty-state" *ngIf="filteredEntries.length === 0">
@@ -200,7 +166,7 @@
                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
               </svg>
-              <input type="text" placeholder="Search user or action…" [(ngModel)]="loginSearch" />
+              <input type="text" placeholder="Search user or action…" [(ngModel)]="loginSearch" (ngModelChange)="onLoginSearchChange()" />
             </div>
             <span class="entry-count">{{ filteredLoginLogs.length }} record{{ filteredLoginLogs.length !== 1 ? 's' : '' }}</span>
           </div>
@@ -219,8 +185,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let l of filteredLoginLogs; let i = index">
-              <td class="col-num cell-muted">{{ i + 1 }}</td>
+            <tr *ngFor="let l of pagedLoginLogs; let i = index">
+              <td class="col-num cell-muted">{{ (loginPage - 1) * pageSize + i + 1 }}</td>
               <td>
                 <span class="user-name">{{ l.userName || ('User #' + l.userID) }}</span>
               </td>
@@ -231,6 +197,13 @@
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <!-- Pagination for login logs -->
+      <div class="audit-pagination" *ngIf="loginTotalPages > 1">
+        <button class="page-btn" [disabled]="loginPage === 1" (click)="loginPage = loginPage - 1">← Prev</button>
+        <span class="page-info">Page {{ loginPage }} of {{ loginTotalPages }}</span>
+        <button class="page-btn" [disabled]="loginPage === loginTotalPages" (click)="loginPage = loginPage + 1">Next →</button>
       </div>
 
       <div class="empty-state" *ngIf="filteredLoginLogs.length === 0">

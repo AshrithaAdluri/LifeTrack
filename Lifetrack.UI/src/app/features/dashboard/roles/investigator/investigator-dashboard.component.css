@@ -439,6 +439,9 @@
 }
 .notif-mark-read-btn:hover { background: #bae6fd; border-color: #7dd3fc; color: #0c4a6e; }
 
+.notif-delete-btn { display:inline-flex; align-items:center; justify-content:center; margin-top:6px; margin-left:4px; padding:4px 6px; background:#fef2f2; color:#dc2626; border:1px solid #fecaca; border-radius:5px; cursor:pointer; transition:all .15s; line-height:1; }
+.notif-delete-btn:hover { background:#fee2e2; border-color:#fca5a5; }
+
 /* ── Responsive ───────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .dash-body  { grid-template-columns: 1fr; }

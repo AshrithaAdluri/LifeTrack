@@ -61,7 +61,10 @@
             <td class="col-actions">
               <div class="tbl-actions">
                 <button class="tbl-btn tbl-edit"   (click)="openEditModal(p)"   title="Edit">Edit</button>
-                <button class="tbl-btn tbl-assign" (click)="openAssignModal(p)" title="Assign Investigator">Assign</button>
+                <button class="tbl-btn tbl-assign"
+                  (click)="openAssignModal(p)"
+                  [disabled]="p.status !== 'Active'"
+                  [title]="p.status !== 'Active' ? 'Cannot assign — protocol is ' + p.status : 'Assign Investigator'">Assign</button>
               </div>
             </td>
           </tr>

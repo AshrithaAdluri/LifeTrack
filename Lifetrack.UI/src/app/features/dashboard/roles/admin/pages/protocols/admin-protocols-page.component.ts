@@ -318,7 +318,8 @@ export class AdminProtocolsPageComponent implements OnInit, OnDestroy {
       users: this.http.get<any>(`${environment.apiUrl}/users?pageSize=200`)
     }).subscribe({
       next: ({ sites, users }) => {
-        this.siteOptions = sites.items ?? [];
+        // Only show Active sites — cannot assign to Suspended/Closed/Pending sites
+        this.siteOptions = (sites.items ?? []).filter((s: any) => s.status === 'Active');
         this.investigatorOptions = (users.items ?? []).filter((u: any) => u.role === 'Investigator' && u.isActive);
         this.dropdownsLoading = false;
       },

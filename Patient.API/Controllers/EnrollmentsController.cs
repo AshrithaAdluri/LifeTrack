@@ -38,9 +38,8 @@ public class EnrollmentsController : ControllerBase
     {
         try
         {
-            var created = await _svc.CreateAsync(req);
-            // Return only the new ID — the client already holds all other field values
-            return StatusCode(201, new { enrollmentID = created.EnrollmentID });
+            var enrollmentID = await _svc.CreateAsync(req);
+            return StatusCode(201, new { enrollmentID });
         }
         catch (DomainException ex) { return BadRequest(new { error = ex.Message }); }
     }

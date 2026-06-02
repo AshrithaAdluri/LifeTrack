@@ -38,9 +38,8 @@ public class VisitsController : ControllerBase
     {
         try
         {
-            var created = await _visits.CreateAsync(req);
-            // Return only the new ID — client already holds all other field values
-            return StatusCode(201, new { visitID = created.VisitID });
+            var visitID = await _visits.CreateAsync(req);
+            return StatusCode(201, new { visitID });
         }
         catch (DomainException ex) { return BadRequest(new { error = ex.Message }); }
     }

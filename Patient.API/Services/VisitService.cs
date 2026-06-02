@@ -40,14 +40,15 @@ public class VisitService : IVisitService
         return r;
     }
 
-    public async Task<VisitResponse> CreateAsync(CreateVisitRequest req)
+    public async Task<long> CreateAsync(CreateVisitRequest req)
     {
         var enrollment = await _enrollments.GetByIdAsync(req.EnrollmentID);
         if (enrollment is null) throw new DomainException($"Enrollment {req.EnrollmentID} not found.");
         if (enrollment.Status == "Withdrawn") throw new DomainException("Cannot add visits to a withdrawn enrollment.");
         var visit = new Visit { EnrollmentID = req.EnrollmentID, VisitDate = req.VisitDate, Status = req.Status, Notes = req.Notes ?? string.Empty };
+        var created = await _visits.AddAsync(visit);
         BumpVersion(VersionKey);
-        return ToResponse(await _visits.AddAsync(visit));
+        return created.VisitID;  // return only the generated ID
     }
 
     public async Task<VisitResponse?> UpdateAsync(long visitId, UpdateVisitRequest req)

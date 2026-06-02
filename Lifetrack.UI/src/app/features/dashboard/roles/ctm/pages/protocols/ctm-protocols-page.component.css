@@ -85,8 +85,9 @@
 .tbl-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 .tbl-edit        { background: #eff6ff; color: #2563eb; border-color: #bfdbfe; }
 .tbl-edit:hover  { background: #dbeafe; border-color: #93c5fd; }
-.tbl-assign      { background: #f5f3ff; color: #6d28d9; border-color: #ddd6fe; }
-.tbl-assign:hover { background: #ede9fe; border-color: #c4b5fd; }
+.tbl-assign              { background: #f5f3ff; color: #6d28d9; border-color: #ddd6fe; }
+.tbl-assign:hover:not(:disabled) { background: #ede9fe; border-color: #c4b5fd; }
+.tbl-assign:disabled     { background: #f9fafb; color: #9ca3af; border-color: #e5e7eb; cursor: not-allowed; opacity: 0.6; }
 
 /* ── Pagination ── */
 .table-footer {
