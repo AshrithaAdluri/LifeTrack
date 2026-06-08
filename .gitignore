@@ -73,7 +73,6 @@ Lifetrack.UI/dist/
 Lifetrack.UI/.angular/
 
 ## Environment files (contain API URLs / keys)
-Lifetrack.UI/src/environments/environment.prod.ts
 Lifetrack.UI/src/environments/environment.development.ts
 
 ## npm / yarn / pnpm
