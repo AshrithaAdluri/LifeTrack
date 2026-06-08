@@ -1,0 +1,14 @@
+﻿/workspaces/LifeTrack/Shared.CL/DTOs/ApiResponse.cs
+/workspaces/LifeTrack/Shared.CL/DTOs/AuditLogDto.cs
+/workspaces/LifeTrack/Shared.CL/DTOs/ErrorDetail.cs
+/workspaces/LifeTrack/Shared.CL/DTOs/PagedResponse.cs
+/workspaces/LifeTrack/Shared.CL/Enums/RolesEnum.cs
+/workspaces/LifeTrack/Shared.CL/Exceptions/DomainException.cs
+/workspaces/LifeTrack/Shared.CL/Exceptions/NotFoundException.cs
+/workspaces/LifeTrack/Shared.CL/Extensions/ApplicationBuilderExtensions.cs
+/workspaces/LifeTrack/Shared.CL/Filters/ActivityLogFilter.cs
+/workspaces/LifeTrack/Shared.CL/Filters/DomainExceptionFilter.cs
+/workspaces/LifeTrack/Shared.CL/Filters/JwtAuthFilter.cs
+/workspaces/LifeTrack/Shared.CL/Filters/RoleAuthorizeFilter.cs
+/workspaces/LifeTrack/Shared.CL/Filters/ValidateModelFilter.cs
+/workspaces/LifeTrack/Shared.CL/Middleware/GlobalExceptionMiddleware.cs

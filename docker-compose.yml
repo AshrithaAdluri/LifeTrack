@@ -6,6 +6,8 @@ networks:
 
 volumes:
   sqldata:
+  sonar_data:
+  sonar_db_data:
 
 services:
 
@@ -164,5 +166,31 @@ services:
       - "4200:80"
     depends_on:
       - gateway-api
+    networks:
+      - lifetrack-net
+
+  sonar-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+      POSTGRES_DB: sonar
+    volumes:
+      - sonar_db_data:/var/lib/postgresql/data
+    networks:
+      - lifetrack-net
+
+  sonarqube:
+    image: sonarqube:community
+    depends_on:
+      - sonar-db
+    ports:
+      - "9000:9000"
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://sonar-db:5432/sonar
+      SONAR_JDBC_USERNAME: sonar
+      SONAR_JDBC_PASSWORD: sonar
+    volumes:
+      - sonar_data:/opt/sonarqube/data
     networks:
       - lifetrack-net

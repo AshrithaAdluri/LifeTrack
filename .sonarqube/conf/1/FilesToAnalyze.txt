@@ -1,0 +1,12 @@
+﻿/workspaces/LifeTrack/Gateway.API/Program.cs
+/workspaces/LifeTrack/Gateway.API/obj/Debug/net10.0/Gateway.API.GlobalUsings.g.cs
+/workspaces/LifeTrack/Gateway.API/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.cs
+/workspaces/LifeTrack/Gateway.API/obj/Debug/net10.0/Gateway.API.AssemblyInfo.cs
+/workspaces/LifeTrack/Gateway.API/obj/Debug/net10.0/Gateway.API.MvcApplicationPartsAssemblyInfo.cs
+/workspaces/LifeTrack/Gateway.API/appsettings.Development.json
+/workspaces/LifeTrack/Gateway.API/appsettings.json
+/workspaces/LifeTrack/Gateway.API/ocelot.json
+/workspaces/LifeTrack/Gateway.API/Dockerfile
+/workspaces/LifeTrack/Gateway.API/Gateway.API.http
+/workspaces/LifeTrack/Gateway.API/Properties/launchSettings.json
+/workspaces/LifeTrack/.dockerignore

@@ -1,0 +1,1 @@
+/workspaces/LifeTrack/.sonarqube/out/1
